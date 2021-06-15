@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Proof-of-Brain</title>
+        <meta name="description" content="Proof of Brain game that runs on HIVE">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/style.css">
+        <script src="https://unpkg.com/@hiveio/dhive@latest/dist/dhive.js"></script>
+    </head>
+    <body>
+        <div id="content">
+            <div id="header">~ Proof of Brain ~</div>
+            <div class="grid">
+                <div id="img0" onclick="imgClick(this)"></div>
+                <div id="img1" onclick="imgClick(this)"></div>
+                <div id="img2" onclick="imgClick(this)"></div>
+                <div id="img3" onclick="imgClick(this)"></div>
+                <div id="img4" onclick="imgClick(this)"></div>
+                <div id="img5" onclick="imgClick(this)"></div>
+                <div id="img6" onclick="imgClick(this)"></div>
+                <div id="img7" onclick="imgClick(this)"></div>
+                <div id="img8" onclick="imgClick(this)"></div>
+            </div>
+            <div id="loginAndStats">
+                <div id="loginBox">
+                    <form action="javascript:login()" method="post">
+                        <div id="loginStatus">Incorrect password</div>
+                        <div class="container">
+                            <label for="uname"><b>Username</b></label>
+                            <input id="loginName" type="text" placeholder="Enter Username" name="uname" required>
+                            <label for="psw"><b>Password</b></label>
+                            <input id="loginPass" type="password" placeholder="Posting Key" name="psw" required>
+                            <button type="submit">Login</button>
+                            <label>
+                            <input id="loginCheckbox" type="checkbox" checked="checked" name="remember"> Remember me
+                            </label>
+                        </div>
+                    </form> 
+                </div>
+                <div id="statsParent">
+                    <p id="statsTitle">User Stats</p>
+                    <div id="logout" onclick="logout()">Logout</div>
+                    <div id="stats">
+                        <div id="rank">Rank: ?</div>
+                        <div id="tokens">Tokens: ?</div>
+                        <div id="lives">Lives: ?</div>
+                        <div id="streak">Streak: ?</div>
+                    </div>
+                    <div id="statsHistory"></div>
+                </div>
+            </div>
+            <div id="gameHistoryParent">
+                <p id="gameHistoryTitle">Game History</p>
+                <div id="currentGame"></div>
+                <div id="gameHistory"></div>
+            </div>
+            <div id="footer" class="noselect" onclick="sendAnswer()">SEND ANSWER</div>
+        </div>
+        <script src="javascript/brain.js"></script>
+    </body>
+</html>
