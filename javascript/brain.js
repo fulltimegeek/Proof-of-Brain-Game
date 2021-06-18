@@ -287,7 +287,7 @@ function checkForOps(block){
                                 
                                 if(reason === REASON_CORRECT){
                                     if(guesser === player) event.classList.add(REASON_CORRECT)
-                                    event.innerHTML = guesser+" won Game #"+id+" [R:"+rank+", T:"+tokens+", L:"+lives+"]"
+                                    event.innerHTML = guesser+" won Game #"+id+" [R:"+rank+", B:"+tokens+", L:"+lives+"]"
                                     gameHistory.prepend(event)
                                 } 
                             }
@@ -313,7 +313,7 @@ function checkForOps(block){
 function updateStats(id, reason, rank, tokens, lives, streak){
     let text = player+" "+reason+" Game #"+id
     rankDiv.innerHTML="Rank: "+rank
-    tokensDiv.innerHTML="Tokens: "+tokens
+    tokensDiv.innerHTML="BRAIN: "+tokens
     livesDiv.innerHTML="Lives: "+lives
     streakDiv.innerHTML="Streak: "+streak
     populateStats(text,reason)
@@ -322,7 +322,7 @@ function updateStats(id, reason, rank, tokens, lives, streak){
 function resetStats(){
     statsDiv.innerHTML = ""
     rankDiv.innerHTML="Rank: ?"
-    tokensDiv.innerHTML="Tokens: ?"
+    tokensDiv.innerHTML="BRAIN: ?"
     livesDiv.innerHTML="Lives: ?"
     streakDiv.innerHTML="Streak: ?"
 }
