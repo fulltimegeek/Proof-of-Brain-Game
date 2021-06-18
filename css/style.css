@@ -38,6 +38,7 @@ body{
     font-size: 2rem;
     font-weight: bold;
     padding: 15px;
+    border-bottom: 3px solid black;
 }
 
 #footer{
@@ -144,7 +145,8 @@ body{
       font-size: 1.2rem;
     }
     #header{
-      font-size: 1.3rem; 
+      font-size: 1.3rem;
+      
     }
   }
 
