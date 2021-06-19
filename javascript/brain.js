@@ -15,6 +15,7 @@ const defaultAnswer = ["00","01","02","10","11","12","20","21","22"]
 const REASON_WRONG = "wrong"
 const REASON_CORRECT = "correct"
 const REASON_INVALID = "invalid"
+const REASON_REPLENISH = "replenish"
 const footer = document.getElementById("footer")
 const currentGameDiv = document.getElementById("currentGame")
 const gameHistory = document.getElementById("gameHistory")
@@ -23,7 +24,7 @@ const rankDiv = document.getElementById("rank")
 const tokensDiv = document.getElementById("tokens")
 const livesDiv = document.getElementById("lives")
 const streakDiv = document.getElementById("streak")
-const client = new dhive.Client(["https://api.hive.blog", "https://api.hivekings.com", "https://anyx.io", "https://api.openhive.network"]);
+const client = new dhive.Client(["https://api.hive.blog", "https://anyx.io", "https://api.hivekings.com", "https://api.openhive.network"]);
 const blockchain = new dhive.Blockchain(client)
 
 
@@ -196,6 +197,7 @@ function login(){
                 document.getElementById("loginBox").style.display = "none"
                 document.getElementById("statsParent").style.display = "block"
                 setStatsTitle()
+                hivesignerURL = "https://hivesigner.com/sign/transfer?from="+player+"&to="+serverAccount+"&amount=1%20HBD"
             }else{
                 status("Incorrect password")
             } 
@@ -227,6 +229,7 @@ function checkAuth(){
         setStatsTitle()
         document.getElementById("loginBox").style.display = "none"
         document.getElementById("statsParent").style.display = "block"
+        hivesignerURL = "https://hivesigner.com/sign/transfer?from="+player+"&to="+serverAccount+"&amount=1%20HBD"
    }
 }
 
@@ -283,6 +286,8 @@ function checkForOps(block){
                                     updateStats(id, reason,rank,tokens,lives,streak)
                                 }else if(reason === REASON_INVALID && guesser === player){
                                     updateStats(id, reason,rank,tokens,lives,streak)
+                                }else if(reason === REASON_REPLENISH && guesser === player){
+                                    updateStats(id, reason,rank,tokens,lives,streak)
                                 }
                                 
                                 if(reason === REASON_CORRECT){
@@ -310,13 +315,21 @@ function checkForOps(block){
     }
 }
 
+let hivesignerURL;
+
 function updateStats(id, reason, rank, tokens, lives, streak){
     let text = player+" "+reason+" Game #"+id
     rankDiv.innerHTML="Rank: "+rank
     tokensDiv.innerHTML="BRAIN: "+tokens
     livesDiv.innerHTML="Lives: "+lives
     streakDiv.innerHTML="Streak: "+streak
+    if(reason === REASON_INVALID && lives == 0) text = "Send <a href='"+hivesignerURL+"' target='_blank'>@"+serverAccount+"</a> 1 HBD to acquire 15 more lives"
+    if(reason === REASON_REPLENISH) text = "Lives replenished ("+lives+") Game #"+id
     populateStats(text,reason)
+    if(reason === REASON_WRONG && lives == 0){
+        text = "Send <a href='"+hivesignerURL+"' target='_blank'>@"+serverAccount+"</a> 1 HBD to acquire 15 more lives"
+        populateStats(text,REASON_INVALID)
+    } 
 }
 
 function resetStats(){
