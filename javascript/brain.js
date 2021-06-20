@@ -266,7 +266,7 @@ async function getBlocks(num){
     }catch(e){
         console.log(e)
         apiServers.push(apiServers.shift());
-        console.log("Switching to API server: "+apiServers[0])
+        console.log("Switching API server to: "+apiServers[0])
         client = new dhive.Client(apiServers);
         blockchain = new dhive.Blockchain(client)
         setTimeout(function(){ getBlocks(nextBlock)},500)
