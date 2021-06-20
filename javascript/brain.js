@@ -24,9 +24,22 @@ const rankDiv = document.getElementById("rank")
 const tokensDiv = document.getElementById("tokens")
 const livesDiv = document.getElementById("lives")
 const streakDiv = document.getElementById("streak")
-const client = new dhive.Client(["https://api.hive.blog", "https://anyx.io", "https://api.hivekings.com", "https://api.openhive.network"]);
-const blockchain = new dhive.Blockchain(client)
 
+let apiServers = [
+"https://api.hive.blog", 
+"https://api.openhive.network", 
+"https://hive.roelandp.nl", 
+"https://api.pharesim.me", 
+"https://api.deathwing.me", 
+"https://hive-api.arcange.eu", 
+"https://rpc.ausbit.dev", 
+"https://hived.privex.io", 
+"https://api.hivekings.com", 
+"https://hived.emre.sh"
+]
+
+let client = new dhive.Client(apiServers);
+let blockchain = new dhive.Blockchain(client)
 
 let player = "";
 let privateKey;
@@ -252,7 +265,11 @@ async function getBlocks(num){
         }
     }catch(e){
         console.log(e)
-        setTimeout(function(){ getBlocks(nextBlock)},1500)
+        apiServers.push(apiServers.shift());
+        console.log("Switching to API server: "+apiServers[0])
+        client = new dhive.Client(apiServers);
+        blockchain = new dhive.Blockchain(client)
+        setTimeout(function(){ getBlocks(nextBlock)},500)
     }
 }
 
@@ -323,6 +340,7 @@ function updateStats(id, reason, rank, tokens, lives, streak){
     tokensDiv.innerHTML="BRAIN: "+tokens
     livesDiv.innerHTML="Lives: "+lives
     streakDiv.innerHTML="Streak: "+streak
+    if(reason === REASON_INVALID && lives > 0) text = "Invalid current game @ "
     if(reason === REASON_INVALID && lives == 0) text = "Send <a href='"+hivesignerURL+"' target='_blank'>@"+serverAccount+"</a> 1 HBD to acquire 15 more lives"
     if(reason === REASON_REPLENISH) text = "Lives replenished ("+lives+") Game #"+id
     populateStats(text,reason)
