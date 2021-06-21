@@ -26,16 +26,14 @@ const livesDiv = document.getElementById("lives")
 const streakDiv = document.getElementById("streak")
 
 let apiServers = [
-"https://api.hive.blog", 
-"https://api.openhive.network", 
-"https://hive.roelandp.nl", 
+"https://api.deathwing.me",
+"https://hived.emre.sh",
 "https://api.pharesim.me", 
-"https://api.deathwing.me", 
+"https://hive.roelandp.nl", 
+"https://rpc.ecency.com", 
 "https://hive-api.arcange.eu", 
-"https://rpc.ausbit.dev", 
-"https://hived.privex.io", 
-"https://api.hivekings.com", 
-"https://hived.emre.sh"
+"https://rpc.ausbit.dev",
+"https://api.hive.blog", 
 ]
 
 let client = new dhive.Client(apiServers);
