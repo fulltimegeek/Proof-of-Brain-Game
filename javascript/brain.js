@@ -258,7 +258,11 @@ async function getBlocks(num){
                 let current = block.transactions[0].block_num
                 nextBlock = ++current
                 if(TESTING) console.log(`New block, id: ${current}`);
-                checkForOps(block)
+                for(let tx of block.transactions){
+                    for(let operation of tx.operations){
+                        scanOperation(operation,true)
+                    }
+                }
             }
         }
     }catch(e){
@@ -271,60 +275,56 @@ async function getBlocks(num){
     }
 }
 
-function checkForOps(block){
-    for(let tx of block.transactions){
-        for(let operation of tx.operations){
-            if(operation[0] == "custom_json"){
-                let json = JSON.parse(operation[1].json)
-                let author = operation[1].required_posting_auths[0]
-                let id = operation[1].id
-                if(author === serverAccount && id === appName){
-                    if(json.hasOwnProperty("type") && json.type === "evaluation"){
-                        if(!sending) backToDefault()
-                        let guesses = json.guesses;
-                        let id = json.gameId
-                        for(guess of guesses){
-                            let split = guess.split(",")
-                            if(split.length >= 7){
-                                let event = document.createElement("P")
-                                let guesser = split[0]
-                                let reputation = split[1]
-                                let tokens = split[2]
-                                let lives = split[3]
-                                let reason = split[4]
-                                let streak = split[5]
-                                let rank = split[6]
+function scanOperation(operation, doNewGame){
+    if(operation[0] == "custom_json"){
+        let json = JSON.parse(operation[1].json)
+        let author = operation[1].required_posting_auths[0]
+        let id = operation[1].id
+        if(author === serverAccount && id === appName){
+            if(json.hasOwnProperty("type") && json.type === "evaluation"){
+                if(!sending) backToDefault()
+                let guesses = json.guesses;
+                let id = json.gameId
+                for(guess of guesses){
+                    let split = guess.split(",")
+                    if(split.length >= 7){
+                        let event = document.createElement("P")
+                        let guesser = split[0]
+                        let reputation = split[1]
+                        let tokens = split[2]
+                        let lives = split[3]
+                        let reason = split[4]
+                        let streak = split[5]
+                        let rank = split[6]
 
-                                if(reason === REASON_CORRECT && guesser === player){
-                                    updateStats(id, reason,rank,tokens,lives,streak)
-                                }else if(reason === REASON_WRONG && guesser === player){
-                                    updateStats(id, reason,rank,tokens,lives,streak)
-                                }else if(reason === REASON_INVALID && guesser === player){
-                                    updateStats(id, reason,rank,tokens,lives,streak)
-                                }else if(reason === REASON_REPLENISH && guesser === player){
-                                    updateStats(id, reason,rank,tokens,lives,streak)
-                                }
-                                
-                                if(reason === REASON_CORRECT){
-                                    if(guesser === player) event.classList.add(REASON_CORRECT)
-                                    event.innerHTML = guesser+" won Game #"+id+" [R:"+rank+", B:"+tokens+", L:"+lives+"]"
-                                    gameHistory.prepend(event)
-                                } 
-                            }
+                        if(reason === REASON_CORRECT && guesser === player){
+                            updateStats(id, reason,rank,tokens,lives,streak)
+                        }else if(reason === REASON_WRONG && guesser === player){
+                            updateStats(id, reason,rank,tokens,lives,streak)
+                        }else if(reason === REASON_INVALID && guesser === player){
+                            updateStats(id, reason,rank,tokens,lives,streak)
+                        }else if(reason === REASON_REPLENISH && guesser === player){
+                            updateStats(id, reason,rank,tokens,lives,streak)
                         }
+                        
+                        if(reason === REASON_CORRECT){
+                            if(guesser === player) event.classList.add(REASON_CORRECT)
+                            event.innerHTML = guesser+" won Game #"+id+" [R:"+rank+", B:"+tokens+", L:"+lives+"]"
+                            gameHistory.prepend(event)
+                        } 
                     }
                 }
-            }else if(operation[0] === "account_update2" && operation[1].account === serverAccount){
-                let json = JSON.parse(operation[1].posting_json_metadata)
-                if(json.hasOwnProperty("game")){
-                    let game = json.game
-                    let currentGame = game.gameId
-                    if(currentGame !== gameId){
-                        gameId = currentGame
-                        currentGameDiv.innerHTML = "Current Game: "+currentGame
-                        loadJigsaw(game)
-                    }
-                }
+            }
+        }
+    }else if(doNewGame && operation[0] === "account_update2" && operation[1].account === serverAccount){
+        let json = JSON.parse(operation[1].posting_json_metadata)
+        if(json.hasOwnProperty("game")){
+            let game = json.game
+            let currentGame = game.gameId
+            if(currentGame !== gameId){
+                gameId = currentGame
+                currentGameDiv.innerHTML = "Current Game: "+currentGame
+                loadJigsaw(game)
             }
         }
     }
@@ -359,7 +359,16 @@ function resetStats(){
 checkAuth()
 blockchain.getCurrentBlockNum().then(num => {
     console.log("Starting game at block "+num)
+    getRecentHistory()
     getGame()
     sleep(250) //I want to make sure that getGame happens before getBlocks b/c the last game might be expired
     getBlocks(num)
 })
+
+function getRecentHistory(){ //If serverAccount has received a lot of upvotes recently then nothing might show up in the Game History box
+    client.database.getAccountHistory(serverAccount,-1,30).then(result => {
+        for(let tx of result){
+            scanOperation(tx[1].op,false)
+        }
+    })
+}
