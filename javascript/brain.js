@@ -333,12 +333,12 @@ function scanOperation(operation, doNewGame){
 let hivesignerURL;
 
 function updateStats(id, reason, rank, tokens, lives, streak){
-    let text = player+" "+reason+" Game #"+id
+    let text = player+" "+reason+" (Game #"+id+")"
     rankDiv.innerHTML="Rank: "+rank
     tokensDiv.innerHTML="BRAIN: "+tokens
     livesDiv.innerHTML="Lives: "+lives
     streakDiv.innerHTML="Streak: "+streak
-    if(reason === REASON_INVALID && lives > 0) text = "Expired (current game @ "+id+")"
+    if(reason === REASON_INVALID && lives > 0) text = "Expired (Current Game @ "+id+")"
     if(reason === REASON_INVALID && lives == 0) text = "Send <a href='"+hivesignerURL+"' target='_blank'>@"+serverAccount+"</a> 1 HBD to acquire 15 more lives"
     if(reason === REASON_REPLENISH) text = "Lives replenished ("+lives+") Game #"+id
     populateStats(text,reason)
