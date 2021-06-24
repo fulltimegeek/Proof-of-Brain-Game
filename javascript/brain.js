@@ -338,7 +338,7 @@ function updateStats(id, reason, rank, tokens, lives, streak){
     tokensDiv.innerHTML="BRAIN: "+tokens
     livesDiv.innerHTML="Lives: "+lives
     streakDiv.innerHTML="Streak: "+streak
-    if(reason === REASON_INVALID && lives > 0) text = "Invalid current game @ "+id
+    if(reason === REASON_INVALID && lives > 0) text = "Expired (current game @ "+id+")"
     if(reason === REASON_INVALID && lives == 0) text = "Send <a href='"+hivesignerURL+"' target='_blank'>@"+serverAccount+"</a> 1 HBD to acquire 15 more lives"
     if(reason === REASON_REPLENISH) text = "Lives replenished ("+lives+") Game #"+id
     populateStats(text,reason)
