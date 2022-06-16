@@ -53,17 +53,18 @@ let nextBlock
 
 function sendAnswer(){
     if(!sending && !loading && player.length > 0 && privateKey !== null){
-        let json = JSON.stringify({answer:answer.join(","),gameId})
-        let op1 ={id:appName,json,required_auths:[],required_posting_auths:[player]}
-        sending = true
-        document.body.style.cursor = 'wait';
-        footer.style.cursor = 'wait'
-        document.getElementById("footer").style.background = "orange";
-        client.broadcast.json(op1,privateKey).then(result =>{
-            sending = false
-
-            console.log(result)
-        })
+        if(window.confirm("Send Answer")){
+            let json = JSON.stringify({answer:answer.join(","),gameId})
+            let op1 ={id:appName,json,required_auths:[],required_posting_auths:[player]}
+            sending = true
+            document.body.style.cursor = 'wait';
+            footer.style.cursor = 'wait'
+            document.getElementById("footer").style.background = "orange";
+            client.broadcast.json(op1,privateKey).then(result =>{
+                sending = false
+                console.log(result)
+            })
+        }
     } 
 }
 
