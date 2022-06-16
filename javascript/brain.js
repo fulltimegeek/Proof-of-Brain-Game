@@ -45,13 +45,14 @@ let answer = ["00","01","02","10","11","12","20","21","22"]
 let prevBg = window.getComputedStyle(footer, false).backgroundColor
 let loopingHistory = true
 let sending = false
+let loading = false
 let gameId = ""
 let previous = null
 let prevIdx = -1
 let nextBlock
 
 function sendAnswer(){
-    if(!sending && player.length > 0 && privateKey !== null){
+    if(!sending && !loading && player.length > 0 && privateKey !== null){
         let json = JSON.stringify({answer:answer.join(","),gameId})
         let op1 ={id:appName,json,required_auths:[],required_posting_auths:[player]}
         sending = true
@@ -133,6 +134,8 @@ function sleep(ms) {
  }
 
  function loadJigsaw(json){
+     loading = true
+     footer.style.background = "#777"
      answer = [...defaultAnswer]
      let base = json.baseUrl
      base += json.gameId+"/"
@@ -172,6 +175,10 @@ function sleep(ms) {
         let url = 'url("'+base+id+'")'
         box.style.backgroundImage = url
     }
+    setTimeout(()=>{
+        footer.style.background = "#3bbced"
+        loading = false
+    },3000)
  }
 
  function populateStats(text,clazz){
